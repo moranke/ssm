@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssm.dao.EmployeeMapper">
+
+  <!--基本查询-->
+  <resultMap id="BaseResultMap" type="ssm.entity.Employee">
+    <id column="empId" jdbcType="INTEGER" property="empId" />
+    <result column="empName" jdbcType="VARCHAR" property="empName" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="deptId" jdbcType="INTEGER" property="deptId" />
+  </resultMap>
+
+  <!--联合查询-->
+  <resultMap id="WithDeptResultMap"  type="ssm.entity.Employee" >
+  	<id column="empId" jdbcType="INTEGER" property="empId" />
+    <result column="empName" jdbcType="VARCHAR" property="empName" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="deptId" jdbcType="INTEGER" property="deptId" />
+    <!-- 指定联合查询出的部门字段的封装 -->
+    <association property="department" javaType="ssm.entity.Department">
+    	<id column="deptId" property="deptId"/>
+    	<result column="deptName" property="deptName"/>
+    </association>
+  </resultMap>
+
+  <sql id="baseEmpSql">
+    <trim suffixOverrides=",">
+      d.deptId,
+      d.deptName,
+    </trim>
+  </sql>
+
+  <sql id="empSqlWithDept">
+    <trim suffixOverrides=",">
+      d.deptId,
+      d.deptName,
+    </trim>
+  </sql>
+
+  <!--   List<Employee> selectByExampleWithDept(EmployeeExample example);
+    Employee selectByPrimaryKeyWithDept(Integer empId); 
+    -->
+   <!-- 查询员工同时带部门信息 -->
+  <select id="selectByExampleWithDept" resultMap="WithDeptResultMap">
+	   select
+	    <if test="distinct">distinct</if>
+	    <include refid="empSqlWithDept" />
+		FROM tbl_emp e
+		left join tbl_dept d on e.`d_id`=d.`dept_id`
+	    <if test="_parameter != null"><include refid="Example_Where_Clause" /></if>
+	    <if test="orderByClause != null">order by ${orderByClause}</if>
+  </select>
+
+  <select id="selectByPrimaryKeyWithDept" resultMap="WithDeptResultMap">
+   	select 
+    <include refid="WithDept_Column_List" />
+    FROM tbl_emp e
+	left join tbl_dept d on e.`d_id`=d.`dept_id`
+    where emp_id = #{empId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 查询员工不带部门信息的 -->
+  <select id="selectByExample" parameterType="ssm.entity.EmployeeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">distinct</if>
+    <include refid="baseEmpSql" />
+    from tbl_emp
+    <if test="_parameter != null"><include refid="Example_Where_Clause" /></if>
+    <if test="orderByClause != null">order by ${orderByClause}</if>
+  </select>
+
+</mapper>

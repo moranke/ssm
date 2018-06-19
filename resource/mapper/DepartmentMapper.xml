@@ -12,8 +12,8 @@
   <!--//统一配置sql查询字段，需要时通过include>refid引入-->
   <sql id="deptSql">
     <trim suffixOverrides=",">
-      m.deptId,
-      m.deptName,
+      d.deptId,
+      d.deptName,
     </trim>
   </sql>
 
@@ -22,10 +22,10 @@
   <select id="getDepartment" parameterType="ssm.entity.Department" resultMap="DepartmentMap">
     select
     <include refid="messageSql"></include>
-    from dept m
+    from dept d
     where 1=1
-    <if test="deptId != null and !&quot;&quot;.equals(deptId.trim())">and m.deptId=#{deptId}</if>
-    <if test="deptName != null and !&quot;&quot;.equals(deptName.trim())">and m.deptName like '%'
+    <if test="deptId != null and !&quot;&quot;.equals(deptId.trim())">and d.deptId=#{deptId}</if>
+    <if test="deptName != null and !&quot;&quot;.equals(deptName.trim())">and d.deptName like '%'
       #{deptName} '%'
     </if>
   </select>
