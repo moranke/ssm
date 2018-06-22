@@ -37,8 +37,13 @@
 
   <sql id="empSqlWithDept">
     <trim suffixOverrides=",">
+        e.empId,
+        e.empName,
+        e.gender,
+        e.email,
       d.deptId,
       d.deptName,
+
     </trim>
   </sql>
 
