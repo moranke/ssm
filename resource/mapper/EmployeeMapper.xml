@@ -27,8 +27,11 @@
 
   <sql id="baseEmpSql">
     <trim suffixOverrides=",">
-      d.deptId,
-      d.deptName,
+      e.empId,
+      e.empName,
+      e.gender,
+      e.email,
+
     </trim>
   </sql>
 
@@ -48,17 +51,17 @@
 	    <if test="distinct">distinct</if>
 	    <include refid="empSqlWithDept" />
 		FROM tbl_emp e
-		left join tbl_dept d on e.`d_id`=d.`dept_id`
+		left join tbl_dept d on e.`deptId`=d.`deptId`
 	    <if test="_parameter != null"><include refid="Example_Where_Clause" /></if>
 	    <if test="orderByClause != null">order by ${orderByClause}</if>
   </select>
 
   <select id="selectByPrimaryKeyWithDept" resultMap="WithDeptResultMap">
    	select 
-    <include refid="WithDept_Column_List" />
+    <include refid="empSqlWithDept" />
     FROM tbl_emp e
-	left join tbl_dept d on e.`d_id`=d.`dept_id`
-    where emp_id = #{empId,jdbcType=INTEGER}
+	left join tbl_dept d on e.`deptId`=d.`deptId`
+    where empId = #{empId}
   </select>
   
   <!-- 查询员工不带部门信息的 -->
